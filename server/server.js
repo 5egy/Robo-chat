@@ -46,4 +46,4 @@ app.post("/", async (req, res) => {
   }
 });
 
-app.listen(5000, () => console.log("RUNNING"));
+app.listen(5000, () => console.log("RUNNING", process.env.OPEN_AI_KEY));
