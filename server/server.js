@@ -5,8 +5,10 @@ import { Configuration, OpenAIApi } from "openai";
 
 dotenv.config();
 
+const apiKey = process.env.OPEN_AI_KEY
+
 const configuration = new Configuration({
-  apiKey: process.env.OPEN_AI_KEY,
+  apiKey
 });
 
 
@@ -46,4 +48,4 @@ app.post("/", async (req, res) => {
   }
 });
 
-app.listen(5000, () => console.log("RUNNING", process.env.OPEN_AI_KEY));
+app.listen(5000, () => console.log("RUNNING", apiKey));
