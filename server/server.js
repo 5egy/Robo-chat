@@ -11,8 +11,6 @@ const configuration = new Configuration({
 
 const openai = new OpenAIApi(configuration);
 
-console.log( process.env.OPEN_AI_KEY)
-
 const app = express();
 
 app.use(cors());
