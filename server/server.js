@@ -11,7 +11,6 @@ const configuration = new Configuration({
   apiKey
 });
 
-
 const openai = new OpenAIApi(configuration);
 
 const app = express();
@@ -19,9 +18,9 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-app.get("/",async  (req, res) => {
+app.get("/", async (req, res) => {
   res.status(200).send({
-    message: "Hello there",
+    message: "Hello There",
   });
 });
 
@@ -41,11 +40,13 @@ app.post("/", async (req, res) => {
     res.status(200).send({
       bot: response.data.choices[0].text,
     });
-  } catch (err) {
-    res.status(500).send({ error: err });
-
-    console.log(err)
+  } catch (error) {
+    res
+      .status(500)
+      .send(
+        "Your request can't be processed at the moment, Please bear with us."
+      );
   }
 });
 
-app.listen(5000, () => console.log("RUNNING", apiKey));
+app.listen(5000, () => console.log("SERVER RUNNING"));

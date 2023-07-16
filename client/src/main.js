@@ -3,12 +3,12 @@ import "./style.css";
 import bot from "./assets/bot.svg";
 import user from "./assets/user.svg";
 
-const form = document.getElementById("form") as HTMLFormElement;
-const chat_container = document.getElementById("chat_container") as HTMLElement;
+const form = document.querySelector("form");
+const chat_container = document.getElementById("chat_container");
 
-let loadInterval: number;
+let loadInterval;
 
-function loader(element: HTMLElement): void {
+function loader(element) {
   element.textContent = "";
   loadInterval = setInterval(() => {
     element.textContent += ".";
@@ -19,25 +19,23 @@ function loader(element: HTMLElement): void {
   }, 300);
 }
 
-
-function typeText(element: HTMLElement, text: string): void {
+function typeText(element, text) {
   let index = 0;
 
   let interval = setInterval(() => {
-    
     if (index < text.length) {
       element.innerHTML += text.charAt(index);
       index++;
-      let angle = chat_container.getBoundingClientRect()
-      window.scrollTo(0, angle.height)
+      // let angle = chat_container.getBoundingClientRect()
+      // window.scrollTo(0, angle.height)
     } else {
-      form.classList.remove("hide")
+      // form.classList.remove("hide")
       clearInterval(interval);
     }
   }, 20);
 }
 
-function generateId(): string {
+function generateId() {
   const time = Date.now();
   const random = Math.random();
   const decimalString = random.toString(16);
@@ -45,7 +43,7 @@ function generateId(): string {
   return `id-${time}-${decimalString}`;
 }
 
-function chatStripe(ai: boolean, value: string, id: string): string {
+function chatStripe(ai, value, id) {
   return `<div class="text-wrap" id= ${ai ? "ai" : ""}>
 <div class="chat">
 
@@ -60,38 +58,32 @@ ${value}
 </div>`;
 }
 
-async function handleSubmit(e: any) {
+async function handleSubmit(e) {
   e.preventDefault();
 
   const data = new FormData(form);
-  console;
 
   //User Typed
-  chat_container.innerHTML += chatStripe(
-    false,
-    data.get("prompt") as string,
-    ""
-  );
-  let angle = chat_container.getBoundingClientRect()
-  window.scrollTo(0, angle.height)
+  chat_container.innerHTML += chatStripe(false, data.get("prompt"));
+  // let angle = chat_container.getBoundingClientRect()
+  // window.scrollTo(0, angle.height)
 
   form.reset();
-  form.classList.add("hide")
+  // form.classList.add("hide")
 
   const id = generateId();
 
   // Bot Replies
-  chat_container.innerHTML += chatStripe(true, "", id);
+  chat_container.innerHTML += chatStripe(true, " ", id);
   chat_container.scrollTop = chat_container.scrollHeight;
 
-  const message = document.getElementById(id) as HTMLElement;
+  const message = document.getElementById(id);
   loader(message);
 
-  async function fetchData(): Promise<any> {
-    const response = await fetch("https://robocht.onrender.com/", {
+    const response = await fetch("http://localhost:5000", {
       method: "POST",
       headers: {
-        "Content-type": "application/json",
+        "Content-Type": "application/json",
       },
       body: JSON.stringify({
         prompt: data.get("prompt"),
@@ -101,21 +93,16 @@ async function handleSubmit(e: any) {
     clearInterval(loadInterval);
     message.innerHTML = "";
 
-    if (!response.ok) {
-      throw new Error(
-        `Network response was not ok: ${response.status} - ${response.statusText}`
-      );
-    } else {
+    if (response.ok) {
       const data = await response.json();
       const parsedData = data.bot.trim();
       typeText(message, parsedData);
+    } else {
+      const err = await response.text();
+      message.innerHTML = err;
+      console.log(err)
     }
-  }
-
-  //Fetching data from server
-  fetchData();
 }
-
 
 form.addEventListener("submit", handleSubmit);
 form.addEventListener("keyup", (e) => {
