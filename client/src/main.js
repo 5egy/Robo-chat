@@ -80,7 +80,7 @@ async function handleSubmit(e) {
   const message = document.getElementById(id);
   loader(message);
 
-    const response = await fetch("http://localhost:5000", {
+    const response = await fetch("https://robocht.onrender.com", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -100,7 +100,6 @@ async function handleSubmit(e) {
     } else {
       const err = await response.text();
       message.innerHTML = err;
-      console.log(err)
     }
 }
 
